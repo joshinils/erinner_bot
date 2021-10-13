@@ -17,6 +17,9 @@ def foo(update: telegram.Update, context: CallbackContext) -> None:
         message = update.edited_message
     message.reply_text("bar " + str(message.message_id),
                        reply_to_message_id=message.message_id)
+    print(message.chat_id)
+    print(message.from_user.id)
+
 
 
 def main():
@@ -32,7 +35,7 @@ def main():
     # for update in updates:
     #     pprint(update.to_dict())
 
-    #bot.send_message(text="bar", chat_id = updates[0].message.from_user.id)
+    # bot.send_message(text="bar", chat_id = updates[0].message.from_user.id)
 
     updater = Updater(TOKEN)
     dispatcher = updater.dispatcher
