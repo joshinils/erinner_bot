@@ -20,3 +20,12 @@ eine json datei mit je:
 * `is_active` bool ob aufgabe abgeschlossen, also ob nerven notwendig?
   * kann benutzt werden um auflistung offener aufgaben zu filtern
   * nerven abschalten, oder mittels `do_nerven = false` setzen?
+
+## bot befehle
+
+* add reminder
+* remove reminder
+* list reminders
+* repeat reminder
+* chain reminder after another is marked as done
+  * with offset after marking as done

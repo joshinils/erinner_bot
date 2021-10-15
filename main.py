@@ -5,6 +5,21 @@ from telegram.ext import Updater, CommandHandler, CallbackContext
 from pprint import pprint
 
 
+def add(update: telegram.Update, context: CallbackContext) -> None:
+    pprint(["context", context], width=1)
+    pprint(["context.args", context.args])
+    pprint(["update", update])
+    pprint(["update.message", update.message])
+    pprint(["update.edited_message", update.edited_message])
+
+    message = update.message
+    if message == None:
+        message = update.edited_message
+    message.reply_text("bar " + str(message.message_id),
+                       reply_to_message_id=message.message_id)
+    print(message.chat_id)
+    print(message.from_user.id)
+
 def foo(update: telegram.Update, context: CallbackContext) -> None:
     pprint(["context", context], width=1)
     pprint(["context.args", context.args])
