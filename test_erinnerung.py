@@ -1,25 +1,8 @@
 #!/usr/bin/env python3
 
-from erinnerung import erinnerung
-
 import pytest
 
-
-def test_0():
-    e = erinnerung()
-    assert e == e
-
-
-def test_1():
-    e1 = erinnerung()
-    e2 = erinnerung()
-    assert e1 == e2
-
-
-def test_2():
-    e1 = erinnerung()
-    e2 = e1
-    assert e1 == e2
+from erinnerung import erinnerung
 
 
 def test_3():
@@ -30,46 +13,48 @@ def test_3():
     #     print(ex)
     with pytest.raises(AssertionError):
         e = erinnerung("a")
+    with pytest.raises(AssertionError):
+        e = erinnerung(1)
+    with pytest.raises(AssertionError):
+        e = erinnerung([])
 
 
-def test_4():
-    e = erinnerung(["a"])
-    assert erinnerung(["a"]) == e
+@pytest.mark.parametrize("test_input,expected",
+                         [
+                             ([""],       [""]),
+                             (["a"],      ["a"]),
+                             (["a", "b"], ["a", "b"])
+                         ])
+def test_eval_equal(test_input, expected):
+    assert test_input == expected
 
+    e1 = erinnerung(test_input)
+    e2 = erinnerung(test_input)
 
-def test_5():
-    e = erinnerung()
-    e.text = "a"
-    assert erinnerung(["a"]) == e
-
-
-def test_6():
-    e = erinnerung()
-    e.text = "b"
-    assert erinnerung(["a"]) != e
-
-def test_7():
-    e = erinnerung(["a"])
-    assert e == e
-
-def test_7_1():
-    e1 = erinnerung(["a"])
-    e2 = e1
+    # two obj instances equal
     assert e1 == e2
 
-def test_8():
-    e1 = erinnerung(["a"])
-    e2 = erinnerung(["a"])
-    assert e1 == e2
+    # equal itself
+    assert e1 == e1
 
-def test_10():
-    e1 = erinnerung(["a", "b"])
-    e2 = erinnerung(["a", "b"])
-    assert e1 == e2
+    # equal to copy of itself
+    e_copy = e1
+    assert e1 == e_copy
 
-def test_11():
-    e1 = erinnerung(["a", "b"])
-    e2 = erinnerung(["a", "c"])
+
+@pytest.mark.parametrize("test_input,expected",
+                         [
+                             (["a"],      [""]),
+                             ([""],       ["a"]),
+                             (["a"],      ["b"]),
+                             (["a", "a"], ["b", "a"]),
+                             (["a", "a"], ["a", "b"]),
+                         ])
+def test_eval_not_equal(test_input, expected):
+    e1 = erinnerung(test_input)
+    e2 = erinnerung(expected)
+
+    # two obj instances equal
     assert e1 != e2
 
 
@@ -82,5 +67,4 @@ def main():
 
 
 if __name__ == "__main__":
-    test_3()
     main()
