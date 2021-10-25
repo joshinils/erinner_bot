@@ -1,8 +1,35 @@
 #!/usr/bin/env python3
 
+from py import test
 import pytest
 
 from erinnerung import erinnerung
+
+
+def split_list(l: list) -> list:
+    new_l = []
+    for e in l:
+        if len(e) < 3:
+            new_l.append(e)
+        else:
+            new_l += e.split()
+    return new_l
+
+
+# test the parts of the tests itself too!
+# how meta!
+@pytest.mark.parametrize("test_input,expected",
+                         [
+                             ([""],       [""]),
+                             (["a"],      ["a"]),
+                             (["a b"],    ["a", "b"]),
+                             (["a", "b"], ["a", "b"]),
+                         ])
+def test_split_list(test_input, expected):
+    split_input = split_list(test_input)
+    assert split_input == expected
+    assert type(test_input) == type(expected)
+    assert type(split_input) == type(expected)
 
 
 def test_3():
@@ -21,12 +48,13 @@ def test_3():
 
 @pytest.mark.parametrize("test_input,expected",
                          [
-                             ([""],       [""]),
-                             (["a"],      ["a"]),
-                             (["a", "b"], ["a", "b"])
+                             ([""],    [""]),
+                             (["a"],   ["a"]),
+                             (["a b"], ["a b"])
                          ])
 def test_eval_equal(test_input, expected):
-    assert test_input == expected
+    test_input = split_list(test_input)
+    expected = split_list(expected)
 
     e1 = erinnerung(test_input)
     e2 = erinnerung(test_input)
@@ -44,13 +72,16 @@ def test_eval_equal(test_input, expected):
 
 @pytest.mark.parametrize("test_input,expected",
                          [
-                             (["a"],      [""]),
-                             ([""],       ["a"]),
-                             (["a"],      ["b"]),
-                             (["a", "a"], ["b", "a"]),
-                             (["a", "a"], ["a", "b"]),
+                             (["a"],    [""]),
+                             ([""],     ["a"]),
+                             (["a"],    ["b"]),
+                             (["a a"], ["b a"]),
+                             (["a a"], ["a b"]),
                          ])
 def test_eval_not_equal(test_input, expected):
+    test_input = split_list(test_input)
+    expected = split_list(expected)
+
     e1 = erinnerung(test_input)
     e2 = erinnerung(expected)
 

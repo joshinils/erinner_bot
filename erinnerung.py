@@ -1,8 +1,7 @@
 
 import datetime
 from datetime import date, timedelta
-
-
+from debug_print import *
 class erinnerung:
     # text welcher die erinnerung beschreibt
     content: str = ""
@@ -31,7 +30,7 @@ class erinnerung:
     def __init__(self: 'erinnerung', l: list) -> 'erinnerung':
         assert isinstance(l, list)
         assert len(l) > 0
-        
+
         self.l = l
         self.content = ""
         self.date_due = datetime.datetime.now() + timedelta(minutes=5)
@@ -47,7 +46,7 @@ class erinnerung:
     def parse_args(self: 'erinnerung') -> None:
         self.content = self.l[0]
         for elem in self.l:
-            print(elem)
+            debug_print(elem)
 
     def __eq__(self: 'erinnerung', other: 'erinnerung') -> bool:
         if isinstance(other, erinnerung):
