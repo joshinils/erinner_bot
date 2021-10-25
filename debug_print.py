@@ -7,4 +7,4 @@ def debug_print(elem):
     info += str(inspect.currentframe().f_back.f_lineno)
     info += " "
     info += "(" + inspect.currentframe().f_back.f_code.co_name + ")"
-    print(info, str(type(elem)) + ": \"" + elem + "\"")
+    print(info, str(type(elem)) + ": \"" + str(elem) + "\"")

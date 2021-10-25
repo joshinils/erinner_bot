@@ -4,6 +4,10 @@ from py import test
 import pytest
 
 from erinnerung import erinnerung
+from debug_print import *
+
+import datetime
+from datetime import date, timedelta
 
 
 def split_list(l: list) -> list:
@@ -87,6 +91,66 @@ def test_eval_not_equal(test_input, expected):
 
     # two obj instances equal
     assert e1 != e2
+
+
+@pytest.mark.parametrize("test_input",
+                         [
+                             (["a in 5"]),
+                             (["a in 5m"]),
+                             (["a in 5 m"]),
+                             (["a in 5min"]),
+                             (["a in 5 min"]),
+                             (["a in 5:0"]),
+                             (["a in 5:0m"]),
+                             (["a in 5:0 m"]),
+                             (["a in 5:0min"]),
+                             (["a in 5:00 min"]),
+                             (["a in 5:00"]),
+                             (["a in 5:00m"]),
+                             (["a in 5:00 m"]),
+                             (["a in 5:00min"]),
+                             (["a in 5:00 min"]),
+                             (["a in 5.0"]),
+                             (["a in 5.0m"]),
+                             (["a in 5.0 m"]),
+                             (["a in 5.0min"]),
+                             (["a in 5.0 min"]),
+                             (["a in 5,0"]),
+                             (["a in 5,0m"]),
+                             (["a in 5,0 m"]),
+                             (["a in 5,0min"]),
+                             (["a in 5,0 min"]),
+                         ])
+def test_in_5_min(test_input):
+    test_input = split_list(test_input)
+
+    e1 = erinnerung(test_input)
+
+    now = datetime.datetime.now()
+    now_plus_5 = now + timedelta(minutes=5)
+
+    seconds_error = (e1.date_due - now_plus_5).total_seconds()
+    assert abs(seconds_error) < 1
+
+
+@pytest.mark.parametrize("test_input",
+                         [
+                             (["a in 10"]),
+                             (["a in 10m"]),
+                             (["a in 10 m"]),
+                             (["a in 10min"]),
+                             (["a in 10 min"]),
+                         ])
+def test_in_10_min(test_input):
+    test_input = split_list(test_input)
+
+    e1 = erinnerung(test_input)
+
+    now = datetime.datetime.now()
+    now_plus_10 = now + timedelta(minutes=10)
+
+    seconds_error = (e1.date_due - now_plus_10).total_seconds()
+    assert abs(seconds_error) < 1
 
 
 def main():
