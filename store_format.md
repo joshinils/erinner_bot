@@ -1,6 +1,6 @@
 # jede erinnerung
 
-speichere in ordner mit namen `id` des chats;  
+speichere in ordner mit namen `id` des chats;
 name.json, wo name eindeutiger string ist, also zb `id` der nachricht
 
 eine json datei mit je:

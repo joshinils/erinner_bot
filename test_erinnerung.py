@@ -1,15 +1,26 @@
 #!/usr/bin/env python3
 
-from py import test
-import pytest
-
-from erinnerung import erinnerung
-from debug_print import *
-
 import datetime
-from datetime import date, timedelta
 import itertools
 import typing
+from datetime import timedelta
+
+import pytest
+
+from erinnerung import Erinnerung
+
+
+def print_detailed_type(   # type: ignore
+    obj,
+    indent: int = 0
+) -> None:
+    print(" " * indent + str(type(obj)))
+    if isinstance(obj, list):
+        type_set: typing.Set = set()
+        for elem in obj:
+            type_set.add(type(elem))
+        for type_ in type_set:
+            print(" " * (indent + 4) + str(type_))
 
 
 def get_arg_list(arg: int) -> typing.List[str]:
@@ -20,7 +31,13 @@ def get_arg_list(arg: int) -> typing.List[str]:
     return arg_str_list
 
 
-def test_string_list(weeks=0, days=0, hours=0, minutes=0, seconds=0):
+def test_string_list(
+    weeks: int = 0,
+    days: int = 0,
+    hours: int = 0,
+    minutes: int = 0,
+    seconds: int = 0
+) -> typing.List[str]:
     separator = [":", ",", ";", "."]
     # separator = [":"]  # debug
     space = ["", " "]
@@ -29,6 +46,7 @@ def test_string_list(weeks=0, days=0, hours=0, minutes=0, seconds=0):
 
     # print(weeks, days, hours, minutes, seconds) # debug
     ret = [""]
+    print("A ret", type(ret))
 
     if (weeks == 0):
         arg_weeks = None
@@ -106,58 +124,60 @@ def test_string_list(weeks=0, days=0, hours=0, minutes=0, seconds=0):
     return ret
 
 
-def split_list(l: list) -> list:
-    new_l = []
-    for e in l:
-        if len(e) < 3:
-            new_l.append(e)
-        else:
-            new_l += e.split()
-    return new_l
+def split_list(lst: typing.List[str]) -> typing.List[str]:
+    new_lst = []
+    elem: str
+    for elem in lst:
+        new_lst += elem.split()
+    #  wrong, not the same
+    # assert new_lst == [x.split() for x in lst]
+    #  ['a'] != [['a']]
+
+    return new_lst
 
 
 # test the parts of the tests itself too!
 # how meta!
-@pytest.mark.parametrize("test_input,expected",
+@pytest.mark.parametrize("test_input, expected",   # type: ignore
                          [
-                             ([""],       [""]),
-                             (["a"],      ["a"]),
-                             (["a b"],    ["a", "b"]),
-                             (["a", "b"], ["a", "b"]),
+                             ([""],       [""]),        # noqa: E241
+                             (["a"],      ["a"]),       # noqa: E241
+                             (["a b"],    ["a", "b"]),  # noqa: E241
+                             (["a", "b"], ["a", "b"]),  # noqa: E241
                          ])
-def test_split_list(test_input, expected):
+def test_split_list(test_input: typing.List[str], expected: typing.List[str]) -> None:
     split_input = split_list(test_input)
     assert split_input == expected
     assert type(test_input) == type(expected)
     assert type(split_input) == type(expected)
 
 
-def test_3():
+def test_3() -> None:
     # try:
     #     e = erinnerung("a")
     # except Exception as ex:
     #     print(type(ex))
     #     print(ex)
     with pytest.raises(AssertionError):
-        e = erinnerung("a")
+        Erinnerung("a")   # type: ignore # this is testing if this is wrong
     with pytest.raises(AssertionError):
-        e = erinnerung(1)
+        Erinnerung(1)   # type: ignore # this is testing if this is wrong
     with pytest.raises(AssertionError):
-        e = erinnerung([])
+        Erinnerung([])
 
 
-@pytest.mark.parametrize("test_input,expected",
+@pytest.mark.parametrize("test_input,expected",  # type: ignore
                          [
-                             ([""],    [""]),
-                             (["a"],   ["a"]),
-                             (["a b"], ["a b"])
+                             ([""],    [""]),    # noqa: E241
+                             (["a"],   ["a"]),   # noqa: E241
+                             (["a b"], ["a b"])  # noqa: E241
                          ])
-def test_eval_equal(test_input, expected):
+def test_eval_equal(test_input: typing.List[str], expected: typing.List[str]) -> None:
     test_input = split_list(test_input)
     expected = split_list(expected)
 
-    e1 = erinnerung(test_input)
-    e2 = erinnerung(test_input)
+    e1 = Erinnerung(test_input)
+    e2 = Erinnerung(test_input)
 
     # two obj instances equal
     assert e1 == e2
@@ -170,30 +190,30 @@ def test_eval_equal(test_input, expected):
     assert e1 == e_copy
 
 
-@pytest.mark.parametrize("test_input,expected",
+@pytest.mark.parametrize("test_input,expected",   # type: ignore
                          [
-                             (["a"],    [""]),
-                             ([""],     ["a"]),
-                             (["a"],    ["b"]),
-                             (["a a"], ["b a"]),
-                             (["a a"], ["a b"]),
+                             (["a"],   [""]),     # noqa: E241
+                             ([""],    ["a"]),    # noqa: E241
+                             (["a"],   ["b"]),    # noqa: E241
+                             (["a a"], ["b a"]),  # noqa: E241
+                             (["a a"], ["a b"]),  # noqa: E241
                          ])
-def test_eval_not_equal(test_input, expected):
+def test_eval_not_equal(test_input: typing.List[str], expected: typing.List[str]) -> None:
     test_input = split_list(test_input)
     expected = split_list(expected)
 
-    e1 = erinnerung(test_input)
-    e2 = erinnerung(expected)
+    e1 = Erinnerung(test_input)
+    e2 = Erinnerung(expected)
 
     # two obj instances equal
     assert e1 != e2
 
 
-@pytest.mark.parametrize("test_input", test_string_list(minutes=5))
-def test_in_5_min(test_input):
-    test_input = ("a in " + test_input).split()
+@pytest.mark.parametrize("test_input", [test_string_list(minutes=5)])  # type: ignore
+def test_in_5_min(test_input: typing.List[str]) -> None:
+    test_input = split_list(["a in "] + test_input)
 
-    e1 = erinnerung(test_input)
+    e1 = Erinnerung(test_input)
 
     now = datetime.datetime.now()
     now_plus_5 = now + timedelta(minutes=5)
@@ -202,25 +222,25 @@ def test_in_5_min(test_input):
     assert abs(seconds_error) < 1
 
 
-@ pytest.mark.parametrize("test_input", test_string_list(minutes=10))
-def test_in_10_min(test_input):
-    test_input = ("a in " + test_input).split()
+@pytest.mark.parametrize("test_input", [(test_string_list(minutes=10))])  # type: ignore
+def test_in_10_min(test_input: typing.List[str]) -> None:
+    test_input = split_list(["a in "] + test_input)
 
-    e1 = erinnerung(test_input)
+    e1: Erinnerung = Erinnerung(test_input)
 
-    now = datetime.datetime.now()
-    now_plus_10 = now + timedelta(minutes=10)
+    now: datetime.datetime = datetime.datetime.now()
+    now_plus_10: datetime.datetime = now + timedelta(minutes=10)
 
-    seconds_error = (e1.date_due - now_plus_10).total_seconds()
+    seconds_error: float = (e1.date_due - now_plus_10).total_seconds()
     assert abs(seconds_error) < 1
 
 
-def main():
-    e = erinnerung(["a", "b"])
-    e = erinnerung(["a", "in", "5min"])
-    e = erinnerung(["a", "in", "5", "min"])
-    e = erinnerung(["a", "in", "5m"])
-    e = erinnerung(["a", "in", "5", "m"])
+def main() -> None:
+    Erinnerung(["a", "b"])
+    Erinnerung(["a", "in", "5min"])
+    Erinnerung(["a", "in", "5", "min"])
+    Erinnerung(["a", "in", "5m"])
+    Erinnerung(["a", "in", "5", "m"])
 
 
 if __name__ == "__main__":

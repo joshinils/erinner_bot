@@ -1,22 +1,24 @@
 #!/usr/bin/env python3
 
-import telegram
-from telegram.ext import Updater, CommandHandler, CallbackContext
-from pprint import pprint, pformat
-import typing
 import datetime
+import typing
+from pprint import pformat, pprint
 
-import erinerrung
+import telegram
+from telegram.ext import CallbackContext, CommandHandler, Updater
 
-def my_pformat(obj=None, indent=0) -> str:
-    indent_increment = 4
+import erinnerung
+
+
+def my_pformat(obj: typing.Optional[typing.Any] = None, indent: int = 0) -> str:  # type: ignore
+    indent_increment = 2
     if isinstance(obj, str):
         return obj
 
-    if (isinstance(obj, int)
-                or isinstance(obj, float)
-                or obj is None
-            ):
+    if(isinstance(obj, int)
+       or isinstance(obj, float)
+       or obj is None
+       ):
         return str(obj)
 
     if type(obj) is telegram.messageentity.MessageEntity:
@@ -115,13 +117,32 @@ def add(update: telegram.Update, context: CallbackContext) -> None:
     debug_data["update"] = update
 
     message = update.message
-    if message == None:
+    if message is None:
         message = update.edited_message
     debug_data["message.chat_id"] = message.chat_id
     debug_data["message.from_user.id"] = message.from_user.id
 
     out = "`add called from reply_to_message_id: " + \
         str(message.message_id) + "\n" + my_pformat(debug_data) + "`"
+
+    e = erinnerung.Erinnerung(
+        context.args,
+        {
+            "message_id": message.message_id,
+            "user": {
+                "chat_id": message.chat_id,
+                "user_id": message.from_user.id,
+                "username": message.from_user.username,
+                "last_name": message.from_user.last_name,
+                "first_name": message.from_user.first_name,
+                "language_code": message.from_user.language_code,
+                "is_bot": message.from_user.is_bot,
+            },
+            "debug_data": debug_data
+        }
+    )
+    e.save_json()
+
     print(out)
     message.reply_text(out, parse_mode=telegram.ParseMode.MARKDOWN_V2,
                        reply_to_message_id=message.message_id)
@@ -135,7 +156,7 @@ def foo(update: telegram.Update, context: CallbackContext) -> None:
     pprint(["update.edited_message", update.edited_message])
 
     message = update.message
-    if message == None:
+    if message is None:
         message = update.edited_message
     message.reply_text("bar " + str(message.message_id),
                        reply_to_message_id=message.message_id)
@@ -143,8 +164,8 @@ def foo(update: telegram.Update, context: CallbackContext) -> None:
     print(message.from_user.id)
 
 
-def main():
-    test = {"a": "b",
+def main() -> None:
+    test = {"a": "b",  # noqa
             "b": 1,
             "asdasd": "asdasdassss",
             "c": {"foo": "42",
@@ -181,7 +202,9 @@ def main():
     dispatcher.add_handler(CommandHandler("foo", foo))
     dispatcher.add_handler(CommandHandler("add", add))
 
+    print("updater.start_polling()")
     updater.start_polling()
+    print("updater.idle()")
     updater.idle()
 
     # chat = bot.get_chat("593866396")

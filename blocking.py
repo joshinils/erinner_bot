@@ -6,24 +6,24 @@ intervals.
 """
 # https://github.com/agronholm/apscheduler/blob/3.x/examples/schedulers/background.py
 
-from datetime import datetime
-import time
 import os
+import sys
+# import time
+from datetime import datetime
 
-from apscheduler.schedulers.background import BackgroundScheduler
 import pytz
+from apscheduler.schedulers.background import BackgroundScheduler
 
 
-def tick():
+def tick() -> None:
     print('Tick! The time is: %s' % datetime.now())
 
-import sys
 
 if __name__ == '__main__':
     scheduler = BackgroundScheduler(timezone=pytz.timezone("Europe/Berlin"))
-    foo=scheduler.get_job(job_id="foo")
+    foo = scheduler.get_job(job_id="foo")
     # NoneType
-    #print(foo.id)
+    # print(foo.id)
 
     job = scheduler.add_job(tick, 'interval', seconds=3, id="userid/8")
     job = scheduler.add_job(tick, 'interval', seconds=3, id="userid/8")
@@ -35,10 +35,10 @@ if __name__ == '__main__':
     sys.modules[__name__].tick()
     exit()
 
-    try:
-        # This is here to simulate application activity (which keeps the main thread alive).
-        while True:
-            time.sleep(2)
-    except (KeyboardInterrupt, SystemExit):
-        # Not strictly necessary if daemonic mode is enabled but should be done if possible
-        scheduler.shutdown()
+    # try:
+    #     # This is here to simulate application activity (which keeps the main thread alive).
+    #     while True:
+    #         time.sleep(2)
+    # except (KeyboardInterrupt, SystemExit):
+    #     # Not strictly necessary if daemonic mode is enabled but should be done if possible
+    #     scheduler.shutdown()
