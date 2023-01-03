@@ -27,4 +27,4 @@ if [ "$#" -ne 1 ]; then
     exit 0
 fi
 
-curl -s --data "text=$1" --data "chat_id=$GROUP_ID" 'https://api.telegram.org/bot'$BOT_TOKEN'/sendMessage' > /dev/null
+curl -s --data "text=$1" --data "chat_id=$GROUP_ID" --data "parse_mode=MarkdownV2" 'https://api.telegram.org/bot'$BOT_TOKEN'/sendMessage' > /dev/null
