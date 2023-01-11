@@ -28,3 +28,5 @@ if [ "$#" -gt 2 ]; then
 fi
 
 curl -s --data "text=$1" --data "chat_id=$GROUP_ID" --data "parse_mode=MarkdownV2" 'https://api.telegram.org/bot'$BOT_TOKEN'/sendMessage' > /dev/null
+
+sleep 1
