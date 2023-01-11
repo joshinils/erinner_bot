@@ -7,7 +7,7 @@ cd "$( dirname "${BASH_SOURCE[0]}" )"
 # stolen from:
 # https://hackernoon.com/how-to-create-a-simple-bash-shell-script-to-send-messages-on-telegram-lcz31bx
 
-GROUP_ID=$(cat "todo_group.id")
+GROUP_ID=$(cat ${2:-"todo_group.id"})
 BOT_TOKEN=$(cat "TOKEN")
 
 # this 3 checks (if) are not necessary but should be convenient
@@ -22,8 +22,8 @@ if [ -z "$1" ]
     exit 0
 fi
 
-if [ "$#" -ne 1 ]; then
-    echo "You can pass only one argument. For string with spaces put it on quotes"
+if [ "$#" -gt 2 ]; then
+    echo "You can pass only two arguments. For string with spaces put it on quotes"
     exit 0
 fi
 
