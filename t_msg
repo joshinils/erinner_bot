@@ -7,6 +7,7 @@ cd "$( dirname "${BASH_SOURCE[0]}" )"
 # stolen from:
 # https://hackernoon.com/how-to-create-a-simple-bash-shell-script-to-send-messages-on-telegram-lcz31bx
 
+
 GROUP_ID=$(cat ${2:-"todo_group.id"})
 BOT_TOKEN=$(cat "TOKEN")
 
@@ -27,6 +28,9 @@ if [ "$#" -gt 2 ]; then
     exit 0
 fi
 
-curl -s --data "text=$1" --data "chat_id=$GROUP_ID" --data "parse_mode=MarkdownV2" 'https://api.telegram.org/bot'$BOT_TOKEN'/sendMessage' > /dev/null
+text=${1}
+text=${text//>/\\>}
+text=${text//-/\\-}
+curl -s --data "text=${text}" --data "chat_id=$GROUP_ID" --data "parse_mode=MarkdownV2" 'https://api.telegram.org/bot'$BOT_TOKEN'/sendMessage' # > /dev/null
 
 sleep 1
