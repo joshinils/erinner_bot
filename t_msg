@@ -29,8 +29,30 @@ if [ "$#" -gt 2 ]; then
 fi
 
 text=${1}
+echo
+echo $text
+echo
+text=${text//\*/\\\*}
+text=${text//\[/\\\[}
+text=${text//\]/\\\]}
+text=${text//\(/\\\(}
+text=${text//\)/\\\)}
+text=${text//~/\\~}
+text=${text//`/\\`}
 text=${text//>/\\>}
-text=${text//-/\\-}
+# text=${text//"\#"/"\\#"}
+# text=${text//\+/\\\+}  # WTF
+text=${text//\+/\±}
+text=${text//\-/\\\-}
+text=${text//=/\\=}
+text=${text//|/\\|}
+text=${text//\{/\\\{}
+text=${text//\}/\\\}}
+text=${text//./\\.}
+text=${text//!/\\!}
+
+echo $text; echo
+echo
 curl -s --data "text=${text}" --data "chat_id=$GROUP_ID" --data "parse_mode=MarkdownV2" 'https://api.telegram.org/bot'$BOT_TOKEN'/sendMessage' # > /dev/null
 
 sleep 1
