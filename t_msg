@@ -1,19 +1,20 @@
 #!/usr/bin/env bash
 
 # make callable from anywhere
-cd "$( dirname "${BASH_SOURCE[0]}" )"
+cd "$( dirname "${BASH_SOURCE[0]}" )" || exit 1
 
 
 # stolen from:
 # https://hackernoon.com/how-to-create-a-simple-bash-shell-script-to-send-messages-on-telegram-lcz31bx
 
 
-GROUP_ID=$(cat ${2:-"todo_group.id"})
+GROUP_ID=$(cat "${2:-"todo_group.id"}")
+disable_notification=${3:-"false"}
 BOT_TOKEN=$(cat "TOKEN")
 
 # this 3 checks (if) are not necessary but should be convenient
 if [ "$1" == "-h" ]; then
-  echo "Usage: `basename $0` \"text message\""
+  echo "Usage: $(basename "$0") \"text message\" group.id disable_notification"
   exit 0
 fi
 
@@ -23,14 +24,14 @@ if [ -z "$1" ]
     exit 0
 fi
 
-if [ "$#" -gt 2 ]; then
-    echo "You can pass only two arguments. For string with spaces put it on quotes"
+if [ "$#" -gt 3 ]; then
+    echo "You can pass only three arguments. For string with spaces put it on quotes"
     exit 0
 fi
 
 text=${1}
 echo
-echo $text
+echo "$text"
 echo
 text=${text//\*/\\\*}
 text=${text//\[/\\\[}
@@ -38,7 +39,7 @@ text=${text//\]/\\\]}
 text=${text//\(/\\\(}
 text=${text//\)/\\\)}
 text=${text//~/\\~}
-text=${text//`/\\`}
+text=${text//\`/\\\`}
 text=${text//>/\\>}
 # text=${text//"\#"/"\\#"}
 # text=${text//\+/\\\+}  # WTF
@@ -51,8 +52,9 @@ text=${text//\}/\\\}}
 text=${text//./\\.}
 text=${text//!/\\!}
 
-echo $text; echo
+echo "$text"
 echo
-curl -s --data "text=${text}" --data "chat_id=$GROUP_ID" --data "parse_mode=MarkdownV2" 'https://api.telegram.org/bot'$BOT_TOKEN'/sendMessage' # > /dev/null
+echo
+curl -s --data "text=${text}" --data "chat_id=$GROUP_ID" --data "parse_mode=MarkdownV2" --data "disable_notification=$disable_notification" 'https://api.telegram.org/bot'$BOT_TOKEN'/sendMessage' # > /dev/null
 
 sleep 1
