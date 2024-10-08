@@ -14,8 +14,8 @@ BOT_TOKEN=$(cat "TOKEN")
 
 # this 3 checks (if) are not necessary but should be convenient
 if [ "$1" == "-h" ]; then
-  echo "Usage: $(basename "$0") \"text message\" group.id disable_notification"
-  exit 0
+    echo "Usage: $(basename "$0") \"text message\" group.id [disable_notification] [[message_thread_id]]"
+    exit 0
 fi
 
 if [ -z "$1" ]
@@ -24,8 +24,8 @@ if [ -z "$1" ]
     exit 0
 fi
 
-if [ "$#" -gt 3 ]; then
-    echo "You can pass only three arguments. For string with spaces put it on quotes"
+if [ "$#" -gt 4 ]; then
+    echo "You can pass only four arguments. For string with spaces put it on quotes"
     exit 0
 fi
 
@@ -55,6 +55,11 @@ text=${text//!/\\!}
 echo "$text"
 echo
 echo
-curl -s --data "text=${text}" --data "chat_id=$GROUP_ID" --data "parse_mode=MarkdownV2" --data "disable_notification=$disable_notification" 'https://api.telegram.org/bot'$BOT_TOKEN'/sendMessage' # > /dev/null
+if [ -z "$4" ]
+  then
+    curl -s --data "text=${text}" --data "chat_id=$GROUP_ID" --data "parse_mode=MarkdownV2" --data "disable_notification=$disable_notification" 'https://api.telegram.org/bot'$BOT_TOKEN'/sendMessage' # > /dev/null
+else
+    curl -s --data "text=${text}" --data "chat_id=$GROUP_ID" --data "parse_mode=MarkdownV2" --data "disable_notification=$disable_notification" --data "message_thread_id=$4" 'https://api.telegram.org/bot'$BOT_TOKEN'/sendMessage' # > /dev/null
+fi
 
 sleep 1
